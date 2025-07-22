@@ -53,8 +53,17 @@ const WalletBalance = ({ wallet, transactionCount }) => {
     }
 
     return (
-      <div className="text-center">
-        <p className="text-4xl font-bold text-accent">{balance} <span className="text-2xl font-medium text-gray-500">tBDAG</span></p>
+      <div className="text-center py-4">
+        <div className="mb-2">
+          <span className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+            {balance}
+          </span>
+          <span className="text-2xl font-semibold text-gray-600 ml-3">tBDAG</span>
+        </div>
+        <div className="flex items-center justify-center space-x-2 text-sm text-gray-500">
+          <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+          <span>Live Balance</span>
+        </div>
       </div>
     );
   };
