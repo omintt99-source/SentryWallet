@@ -5,6 +5,7 @@ import HomePage from "./components/HomePage";
 import LoginPage from "./components/LoginPage";
 import Dashboard from "./components/Dashboard";
 import WalletDemo from "./components/WalletDemo";
+import TestDashboard from "./components/TestDashboard";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/demo" element={<WalletDemo />} />
+          <Route path="/test" element={<TestDashboard />} />
         </Routes>
       </BrowserRouter>
     </div>
