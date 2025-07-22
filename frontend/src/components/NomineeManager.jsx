@@ -117,113 +117,140 @@ const NomineeManager = ({ user, wallet }) => {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center p-4">
-        <Loader2 className="w-5 h-5 animate-spin" />
-        <span className="ml-2">Loading Nominee Info...</span>
+      <div className="flex items-center justify-center p-8">
+        <div className="text-center">
+          <Loader2 className="w-8 h-8 animate-spin text-purple-600 mx-auto mb-3" />
+          <span className="text-gray-600 font-medium">Loading Nominee Info...</span>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="neumorphic-inset rounded-2xl p-6">
-      {currentNomineeOffChain && !error && (
-        <div className="mb-4 text-sm text-gray-600">
-          Current Off-chain Nominee Email: <span className="font-semibold text-accent">{currentNomineeOffChain}</span>
+    <div className="relative overflow-hidden">
+      <div className="neumorphic-inset rounded-2xl p-6 bg-gradient-to-br from-purple-50/50 to-pink-50/50 border border-purple-100/50 backdrop-blur-sm">
+        {/* Background decoration */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute -top-6 -right-6 w-12 h-12 bg-purple-400/10 rounded-full blur-lg"></div>
+          <div className="absolute -bottom-4 -left-4 w-10 h-10 bg-pink-400/10 rounded-full blur-md"></div>
         </div>
-      )}
-      {currentNomineeOnChain && !error && (
-        <div className="mb-4 text-sm text-gray-600">
-          Current On-chain Nominee: <span className="font-semibold text-accent">{currentNomineeOnChain.address}</span> (Share: <span className="font-semibold text-accent">{currentNomineeOnChain.share}%</span>)
-        </div>
-      )}
-
-      <form onSubmit={handleSave} className="space-y-4">
-        <div>
-          <label htmlFor="nomineeEmail" className="block text-sm font-medium text-gray-700 mb-2">
-            Nominee's Email Address (Off-chain)
-          </label>
-          <input
-            id="nomineeEmail"
-            type="email"
-            value={nomineeEmail}
-            onChange={(e) => setNomineeEmail(e.target.value)}
-            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
-            placeholder="nominee@example.com"
-            required
-            disabled={isSaving}
-          />
-        </div>
-
-        <div>
-          <label htmlFor="nomineeAddress" className="block text-sm font-medium text-gray-700 mb-2">
-            Nominee's BlockDAG Address (On-chain)
-          </label>
-          <input
-            id="nomineeAddress"
-            type="text"
-            value={nomineeAddress}
-            onChange={(e) => setNomineeAddress(e.target.value)}
-            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
-            placeholder="0x..."
-            required
-            disabled={isSaving}
-          />
-        </div>
-
-        <div>
-          <label htmlFor="sharePercentage" className="block text-sm font-medium text-gray-700 mb-2">
-            Share Percentage (1-100)
-          </label>
-          <input
-            id="sharePercentage"
-            type="number"
-            value={sharePercentage}
-            onChange={(e) => setSharePercentage(e.target.value)}
-            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
-            placeholder="e.g., 50 for 50%"
-            required
-            min="1"
-            max="100"
-            disabled={isSaving}
-          />
-        </div>
-
-        {error && (
-          <div className="flex items-center text-red-600 text-sm">
-            <AlertCircle className="w-4 h-4 mr-2" />
-            <span>{error}</span>
-          </div>
-        )}
-
-        {success && (
-          <div className="flex items-center text-green-600 text-sm">
-            <CheckCircle className="w-4 h-4 mr-2" />
-            <span>{success}</span>
-          </div>
-        )}
-
-        <button
-          type="submit"
-          className={`w-full flex items-center justify-center px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
-            isSaving
-              ? 'bg-gray-400 cursor-not-allowed'
-              : 'bg-accent hover:bg-accent/90 text-white'
-          }`}
-          disabled={isSaving}
-        >
-          {isSaving ? (
-            <>
-              <Loader2 className="w-5 h-5 animate-spin mr-2" />
-              Saving...
-            </>
-          ) : (
-            <>
-              <UserPlus className="w-5 h-5 mr-2" />
-              Save Nominee On-Chain
-            </>
+        
+        <div className="relative z-10">
+          {/* Current Nominees Display */}
+          {(currentNomineeOffChain || currentNomineeOnChain) && !error && (
+            <div className="mb-6 p-4 bg-white/60 backdrop-blur-sm rounded-xl border border-purple-200/30">
+              <h3 className="text-sm font-semibold text-purple-800 mb-3 flex items-center">
+                <div className="w-2 h-2 bg-purple-500 rounded-full mr-2"></div>
+                Current Nominees
+              </h3>
+              {currentNomineeOffChain && (
+                <div className="text-sm text-gray-600 mb-2">
+                  <span className="font-medium">Email:</span> 
+                  <span className="text-purple-700 font-semibold ml-2">{currentNomineeOffChain}</span>
+                </div>
+              )}
+              {currentNomineeOnChain && (
+                <div className="text-sm text-gray-600">
+                  <span className="font-medium">On-chain:</span> 
+                  <span className="text-purple-700 font-semibold ml-2 font-mono text-xs">{currentNomineeOnChain.address}</span>
+                  <span className="text-purple-600 ml-2">({currentNomineeOnChain.share}%)</span>
+                </div>
+              )}
+            </div>
           )}
-        </button>
-      </form>
+
+          <form onSubmit={handleSave} className="space-y-5">
+            <div>
+              <label htmlFor="nomineeEmail" className="block text-sm font-semibold text-gray-700 mb-3 flex items-center">
+                <div className="w-2 h-2 bg-purple-500 rounded-full mr-2"></div>
+                Nominee's Email Address (Off-chain)
+              </label>
+              <input
+                id="nomineeEmail"
+                type="email"
+                value={nomineeEmail}
+                onChange={(e) => setNomineeEmail(e.target.value)}
+                className="input-enhanced w-full px-4 py-3 rounded-xl outline-none transition-all duration-300 placeholder-gray-400"
+                placeholder="nominee@example.com"
+                required
+                disabled={isSaving}
+              />
+            </div>
+
+            <div>
+              <label htmlFor="nomineeAddress" className="block text-sm font-semibold text-gray-700 mb-3 flex items-center">
+                <div className="w-2 h-2 bg-pink-500 rounded-full mr-2"></div>
+                Nominee's BlockDAG Address (On-chain)
+              </label>
+              <input
+                id="nomineeAddress"
+                type="text"
+                value={nomineeAddress}
+                onChange={(e) => setNomineeAddress(e.target.value)}
+                className="input-enhanced w-full px-4 py-3 rounded-xl outline-none transition-all duration-300 placeholder-gray-400"
+                placeholder="0x... BlockDAG address"
+                required
+                disabled={isSaving}
+              />
+            </div>
+
+            <div>
+              <label htmlFor="sharePercentage" className="block text-sm font-semibold text-gray-700 mb-3 flex items-center">
+                <div className="w-2 h-2 bg-indigo-500 rounded-full mr-2"></div>
+                Share Percentage (1-100)
+              </label>
+              <input
+                id="sharePercentage"
+                type="number"
+                value={sharePercentage}
+                onChange={(e) => setSharePercentage(e.target.value)}
+                className="input-enhanced w-full px-4 py-3 rounded-xl outline-none transition-all duration-300 placeholder-gray-400"
+                placeholder="Enter percentage (e.g., 50)"
+                required
+                min="1"
+                max="100"
+                disabled={isSaving}
+              />
+            </div>
+
+            {error && (
+              <div className="flex items-center text-red-600 bg-red-50 p-3 rounded-xl border border-red-200">
+                <AlertCircle className="w-4 h-4 mr-2" />
+                <span className="text-sm font-medium">{error}</span>
+              </div>
+            )}
+
+            {success && (
+              <div className="flex items-center text-green-600 bg-green-50 p-3 rounded-xl border border-green-200">
+                <CheckCircle className="w-4 h-4 mr-2" />
+                <span className="text-sm font-medium">{success}</span>
+              </div>
+            )}
+
+            <button
+              type="submit"
+              className={`w-full flex items-center justify-center px-6 py-4 rounded-xl font-semibold transition-all duration-300 ${
+                isSaving
+                  ? 'bg-gray-400 cursor-not-allowed text-white opacity-50'
+                  : 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg hover:shadow-xl hover:scale-105'
+              }`}
+              disabled={isSaving}
+            >
+              {isSaving ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin mr-2" />
+                  Saving to Blockchain...
+                </>
+              ) : (
+                <>
+                  <UserPlus className="w-5 h-5 mr-2" />
+                  Save Nominee On-Chain
+                </>
+              )}
+            </button>
+          </form>
+        </div>
+      </div>
     </div>
   );
 };
