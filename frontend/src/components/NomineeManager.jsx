@@ -119,37 +119,6 @@ const NomineeManager = ({ user, wallet }) => {
     }
   };
 
-<<<<<<< HEAD
-  return (
-    <div className="neumorphic-inset rounded-2xl p-6">
-      {/* Display all nominees if present */}
-      {isLoading ? (
-        <div className="mb-4 text-gray-500">Loading nominee details...</div>
-      ) : nomineeData && nomineeData.length > 0 ? (
-        <div className="mb-4 p-4 bg-gray-100 rounded-xl">
-          <div className="font-semibold mb-2">Your Nominees:</div>
-          <table className="w-full text-left mb-2">
-            <thead>
-              <tr>
-                <th className="pr-4">Email</th>
-                <th className="pr-4">Wallet Address</th>
-                <th className="pr-4">Share (%)</th>
-              </tr>
-            </thead>
-            <tbody>
-              {nomineeData.map((nom, idx) => (
-                <tr key={idx} className="border-t">
-                  <td className="pr-4 py-1">{nom.email}</td>
-                  <td className="pr-4 py-1">{nom.address}</td>
-                  <td className="pr-4 py-1">{nom.share}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      ) : (
-        <div className="mb-4 text-gray-500">No nominees added yet.</div>
-=======
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-4">
@@ -170,7 +139,7 @@ const NomineeManager = ({ user, wallet }) => {
         <div className="mb-4 text-sm text-gray-600">
           Current On-chain Nominee: <span className="font-semibold text-accent">{currentNomineeOnChain.address}</span> (Share: <span className="font-semibold text-accent">{currentNomineeOnChain.share}%</span>)
         </div>
->>>>>>> 7449015e2c7871b4e7f0bb34a5c54550e0f30bc1
+      )}
       )}
       <form onSubmit={handleSave} className="space-y-4">
         <div>
