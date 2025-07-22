@@ -7,12 +7,11 @@ import SentryInheritanceABI from '../contracts/SentryInheritance.json';
 const CONTRACT_ADDRESS = process.env.REACT_APP_INHERITANCE_CONTRACT_ADDRESS;
 
 const NomineeManager = ({ user, wallet }) => {
-  const [nomineeEmail, setNomineeEmail] = useState(''); // Off-chain email
-  const [nomineeAddress, setNomineeAddress] = useState(''); // On-chain address
-  const [sharePercentage, setSharePercentage] = useState(''); // On-chain share
-  const [currentNomineeOnChain, setCurrentNomineeOnChain] = useState(null); // { address, share }
-  const [currentNomineeOffChain, setCurrentNomineeOffChain] = useState(''); // Off-chain email
-
+  const [nomineeEmail, setNomineeEmail] = useState('');
+  const [nomineeAddress, setNomineeAddress] = useState('');
+  const [sharePercentage, setSharePercentage] = useState('');
+  const [currentNomineeOnChain, setCurrentNomineeOnChain] = useState(null);
+  const [currentNomineeOffChain, setCurrentNomineeOffChain] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState('');
@@ -28,7 +27,6 @@ const NomineeManager = ({ user, wallet }) => {
       setError('');
 
       try {
-        // Fetch off-chain nominee email
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
           .select('nominee_email')
@@ -43,7 +41,6 @@ const NomineeManager = ({ user, wallet }) => {
           setNomineeEmail(profileData.nominee_email);
         }
 
-        // Fetch on-chain nominee data if contract is available
         if (inheritanceContract && wallet) {
           const onChainShare = await inheritanceContract.nominees(wallet.address);
           if (onChainShare > 0) {
@@ -81,6 +78,7 @@ const NomineeManager = ({ user, wallet }) => {
       setIsSaving(false);
       return;
     }
+
     const share = parseInt(sharePercentage);
     if (isNaN(share) || share <= 0 || share > 100) {
       setError('Share percentage must be a number between 1 and 100.');
@@ -89,7 +87,6 @@ const NomineeManager = ({ user, wallet }) => {
     }
 
     try {
-      // Save off-chain email
       const { error: supabaseError } = await supabase
         .from('profiles')
         .update({ nominee_email: nomineeEmail })
@@ -100,7 +97,6 @@ const NomineeManager = ({ user, wallet }) => {
       }
       setCurrentNomineeOffChain(nomineeEmail);
 
-      // Save on-chain nominee if contract is available
       if (inheritanceContract) {
         const tx = await inheritanceContract.setNominee(nomineeAddress, share);
         await tx.wait();
@@ -140,67 +136,40 @@ const NomineeManager = ({ user, wallet }) => {
           Current On-chain Nominee: <span className="font-semibold text-accent">{currentNomineeOnChain.address}</span> (Share: <span className="font-semibold text-accent">{currentNomineeOnChain.share}%</span>)
         </div>
       )}
-      )}
+
       <form onSubmit={handleSave} className="space-y-4">
         <div>
           <label htmlFor="nomineeEmail" className="block text-sm font-medium text-gray-700 mb-2">
-<<<<<<< HEAD
-            Nominee's Email Address
-=======
             Nominee's Email Address (Off-chain)
->>>>>>> 7449015e2c7871b4e7f0bb34a5c54550e0f30bc1
           </label>
           <input
             id="nomineeEmail"
             type="email"
             value={nomineeEmail}
-<<<<<<< HEAD
-            onChange={(e) => {
-              setNomineeEmail(e.target.value);
-              setError('');
-            }}
-=======
             onChange={(e) => setNomineeEmail(e.target.value)}
->>>>>>> 7449015e2c7871b4e7f0bb34a5c54550e0f30bc1
             className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
             placeholder="nominee@example.com"
             required
             disabled={isSaving}
           />
         </div>
-<<<<<<< HEAD
-        <div>
-          <label htmlFor="nomineeAddress" className="block text-sm font-medium text-gray-700 mb-2">
-            Nominee's Wallet Address
-=======
 
         <div>
           <label htmlFor="nomineeAddress" className="block text-sm font-medium text-gray-700 mb-2">
             Nominee's BlockDAG Address (On-chain)
->>>>>>> 7449015e2c7871b4e7f0bb34a5c54550e0f30bc1
           </label>
           <input
             id="nomineeAddress"
             type="text"
             value={nomineeAddress}
-<<<<<<< HEAD
-            onChange={(e) => {
-              setNomineeAddress(e.target.value);
-              setError('');
-            }}
-=======
             onChange={(e) => setNomineeAddress(e.target.value)}
->>>>>>> 7449015e2c7871b4e7f0bb34a5c54550e0f30bc1
             className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
             placeholder="0x..."
             required
             disabled={isSaving}
           />
         </div>
-<<<<<<< HEAD
-=======
 
->>>>>>> 7449015e2c7871b4e7f0bb34a5c54550e0f30bc1
         <div>
           <label htmlFor="sharePercentage" className="block text-sm font-medium text-gray-700 mb-2">
             Share Percentage (1-100)
@@ -209,14 +178,7 @@ const NomineeManager = ({ user, wallet }) => {
             id="sharePercentage"
             type="number"
             value={sharePercentage}
-<<<<<<< HEAD
-            onChange={(e) => {
-              setSharePercentage(e.target.value);
-              setError('');
-            }}
-=======
             onChange={(e) => setSharePercentage(e.target.value)}
->>>>>>> 7449015e2c7871b4e7f0bb34a5c54550e0f30bc1
             className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
             placeholder="e.g., 50 for 50%"
             required
@@ -225,36 +187,6 @@ const NomineeManager = ({ user, wallet }) => {
             disabled={isSaving}
           />
         </div>
-<<<<<<< HEAD
-        {error && (
-          <div className="text-red-600 text-sm">{error}</div>
-        )}
-        <button
-          type="submit"
-          className={`w-full flex items-center justify-center px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
-            isSaving || error ? 'bg-gray-400 cursor-not-allowed' : 'bg-accent hover:bg-accent/90 text-white'
-          }`}
-          disabled={isSaving || !!error}
-        >
-          {isSaving ? 'Saving...' : 'Save Nominee'}
-        </button>
-      </form>
-      {/* Modal Confirmation */}
-      {showModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
-          <div className="bg-white rounded-xl p-8 shadow-lg text-center">
-            <h2 className="text-xl font-semibold mb-4">Nominee Added!</h2>
-            <p className="mb-6">Nominee details have been saved successfully.</p>
-            <button
-              className="px-6 py-2 bg-accent text-white rounded-xl font-semibold"
-              onClick={() => setShowModal(false)}
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
-=======
 
         {error && (
           <div className="flex items-center text-red-600 text-sm">
@@ -292,7 +224,6 @@ const NomineeManager = ({ user, wallet }) => {
           )}
         </button>
       </form>
->>>>>>> 7449015e2c7871b4e7f0bb34a5c54550e0f30bc1
     </div>
   );
 };
