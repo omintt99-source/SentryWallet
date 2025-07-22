@@ -88,41 +88,6 @@ const NomineeManager = ({ user, wallet }) => {
       return;
     }
 
-<<<<<<< HEAD
-    // Validate total share
-    const currentTotalShare = nomineeData.reduce((total, nominee) => {
-      return total + (nominee.share || nominee.shareAmount || 0);
-    }, 0);
-
-    if (currentTotalShare + share > 100) {
-      setError('Total share cannot exceed 100%.');
-      setIsSaving(false);
-      return;
-    }
-
-    try {
-      // Get current nominees
-      let currentNominees = Array.isArray(nomineeData) ? [...nomineeData] : [];
-      // Add new nominee
-      currentNominees.push({
-        email: nomineeEmail,
-        address: nomineeAddress,
-        share: share,
-      });
-      const { error: supabaseError } = await supabase
-        .from('profiles')
-        .update({ nominee_data: currentNominees })
-        .eq('id', user.id);
-      if (supabaseError) {
-        throw supabaseError;
-      }
-      setShowModal(true);
-      setNomineeEmail('');
-      setNomineeAddress('');
-      setSharePercentage('');
-    } catch (err) {
-      setError('Failed to save nominee. Please try again.');
-=======
     try {
       // Save off-chain email
       const { error: supabaseError } = await supabase
@@ -135,16 +100,20 @@ const NomineeManager = ({ user, wallet }) => {
       }
       setCurrentNomineeOffChain(nomineeEmail);
 
-      // Save on-chain nominee
-      const tx = await inheritanceContract.setNominee(nomineeAddress, share);
-      await tx.wait();
+      // Save on-chain nominee if contract is available
+      if (inheritanceContract) {
+        const tx = await inheritanceContract.setNominee(nomineeAddress, share);
+        await tx.wait();
+        setCurrentNomineeOnChain({ address: nomineeAddress, share: sharePercentage });
+      }
 
-      setCurrentNomineeOnChain({ address: nomineeAddress, share: sharePercentage });
-      setSuccess('Nominee saved successfully on-chain and off-chain!');
+      setSuccess('Nominee saved successfully!');
+      setNomineeEmail('');
+      setNomineeAddress('');
+      setSharePercentage('');
     } catch (err) {
       setError(err.reason || 'Failed to save nominee. Please try again.');
       console.error("Error saving nominee:", err);
->>>>>>> 7449015e2c7871b4e7f0bb34a5c54550e0f30bc1
     } finally {
       setIsSaving(false);
     }
