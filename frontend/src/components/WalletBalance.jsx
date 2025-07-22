@@ -61,12 +61,22 @@ const WalletBalance = ({ wallet, transactionCount }) => {
 
   return (
     <motion.div
-      className="neumorphic-inset rounded-2xl p-6"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
+      className="relative overflow-hidden"
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
       transition={{ delay: 0.2 }}
     >
-      {renderContent()}
+      <div className="neumorphic-inset rounded-2xl p-6 bg-gradient-to-br from-green-50/50 to-emerald-50/50 border border-green-100/50 backdrop-blur-sm">
+        {/* Background decoration */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute -top-10 -right-10 w-20 h-20 bg-green-400/10 rounded-full blur-xl"></div>
+          <div className="absolute -bottom-6 -left-6 w-16 h-16 bg-emerald-400/10 rounded-full blur-lg"></div>
+        </div>
+        
+        <div className="relative z-10">
+          {renderContent()}
+        </div>
+      </div>
     </motion.div>
   );
 };
