@@ -68,17 +68,16 @@ const NomineeManager = ({ user, wallet }) => {
     e.preventDefault();
     setIsSaving(true);
     setError('');
-<<<<<<< HEAD
+    setSuccess('');
 
-    // Basic validation
     if (!nomineeEmail || !nomineeAddress || !sharePercentage) {
       setError('All fields are required.');
-=======
-    setSuccess('');
+      setIsSaving(false);
+      return;
+    }
 
     if (!ethers.utils.isAddress(nomineeAddress)) {
       setError('Invalid nominee BlockDAG address.');
->>>>>>> 7449015e2c7871b4e7f0bb34a5c54550e0f30bc1
       setIsSaving(false);
       return;
     }
