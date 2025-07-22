@@ -1,41 +1,3 @@
-<<<<<<< HEAD
-import React, { useState, useEffect } from 'react';
-import { supabase } from '../utils/wallet';
-
-const NomineeManager = ({ user }) => {
-  const [nomineeEmail, setNomineeEmail] = useState('');
-  const [nomineeAddress, setNomineeAddress] = useState('');
-  const [sharePercentage, setSharePercentage] = useState('');
-  const [isSaving, setIsSaving] = useState(false);
-  const [error, setError] = useState('');
-  const [showModal, setShowModal] = useState(false);
-  const [nomineeData, setNomineeData] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  // Fetch nominee data on mount and after save
-  useEffect(() => {
-    const fetchNominee = async () => {
-      setIsLoading(true);
-      if (!user) return;
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('nominee_data')
-        .eq('id', user.id)
-        .single();
-      if (!error && data && Array.isArray(data.nominee_data)) {
-        setNomineeData(data.nominee_data);
-      } else if (!error && data && data.nominee_data) {
-        // If it's a single object (legacy), convert to array
-        setNomineeData([data.nominee_data]);
-      } else {
-        setNomineeData([]);
-      }
-      setIsLoading(false);
-    };
-    fetchNominee();
-  }, [user, showModal]);
-=======
-
 import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import { supabase } from '../utils/wallet';
@@ -56,11 +18,11 @@ const NomineeManager = ({ user, wallet }) => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  const inheritanceContract = new ethers.Contract(CONTRACT_ADDRESS, SentryInheritanceABI, wallet);
+  const inheritanceContract = CONTRACT_ADDRESS && wallet ? new ethers.Contract(CONTRACT_ADDRESS, SentryInheritanceABI, wallet) : null;
 
   useEffect(() => {
     const fetchNomineeData = async () => {
-      if (!user || !wallet || !CONTRACT_ADDRESS) return;
+      if (!user) return;
 
       setIsLoading(true);
       setError('');
@@ -81,12 +43,14 @@ const NomineeManager = ({ user, wallet }) => {
           setNomineeEmail(profileData.nominee_email);
         }
 
-        // Fetch on-chain nominee data
-        const onChainShare = await inheritanceContract.nominees(wallet.address);
-        if (onChainShare > 0) {
-          setCurrentNomineeOnChain({ address: wallet.address, share: onChainShare.toString() });
-          setNomineeAddress(wallet.address);
-          setSharePercentage(onChainShare.toString());
+        // Fetch on-chain nominee data if contract is available
+        if (inheritanceContract && wallet) {
+          const onChainShare = await inheritanceContract.nominees(wallet.address);
+          if (onChainShare > 0) {
+            setCurrentNomineeOnChain({ address: wallet.address, share: onChainShare.toString() });
+            setNomineeAddress(wallet.address);
+            setSharePercentage(onChainShare.toString());
+          }
         }
 
       } catch (err) {
@@ -98,8 +62,7 @@ const NomineeManager = ({ user, wallet }) => {
     };
 
     fetchNomineeData();
-  }, [user, wallet]);
->>>>>>> 7449015e2c7871b4e7f0bb34a5c54550e0f30bc1
+  }, [user, wallet, inheritanceContract]);
 
   const handleSave = async (e) => {
     e.preventDefault();
